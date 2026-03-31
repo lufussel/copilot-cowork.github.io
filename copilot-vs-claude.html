@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚡ AI Showdown: M365 Copilot vs Claude — March 2026</title>
+  <style>
+    /* ===== FLUENT DESIGN TOKENS ===== */
+    :root {
+      --copilot-primary: #0078D4;
+      --copilot-dark: #005A9E;
+      --copilot-light: #C7E0F4;
+      --copilot-purple: #6264A7;
+      --copilot-gradient: linear-gradient(135deg, #0078D4 0%, #6264A7 100%);
+      --claude-primary: #C96442;
+      --claude-dark: #A04E31;
+      --claude-light: #F5E6D3;
+      --claude-gradient: linear-gradient(135deg, #C96442 0%, #8B4513 100%);
+      --bg: #FAF9F8;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F3F2F1;
+      --bg-strong: #EDEBE9;
+      --border: #E1DFDD;
+      --border-strong: #C8C6C4;
+      --text-primary: #201F1E;
+      --text-secondary: #605E5C;
+      --text-tertiary: #A19F9D;
+      --green: #107C10;
+      --green-light: #DFF6DD;
+      --red: #D13438;
+      --red-light: #FDE7E9;
+      --yellow-light: #FFF4CE;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,.06), 0 0 0 1px rgba(0,0,0,.04);
+      --shadow-md: 0 4px 16px rgba(0,0,0,.10), 0 0 0 1px rgba(0,0,0,.04);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,.14);
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 20px;
+      --radius-full: 9999px;
+      --dur: 200ms;
+      --ease: cubic-bezier(.4,0,.2,1);
+    }
+    [data-theme="dark"] {
+      --bg: #1C1A19;
+      --bg-card: #292827;
+      --bg-subtle: #3B3A39;
+      --bg-strong: #484644;
+      --border: #484644;
+      --border-strong: #605E5C;
+      --text-primary: #FAF9F8;
+      --text-secondary: #C8C6C4;
+      --text-tertiary: #A19F9D;
+      --shadow-sm: 0 2px 8px rgba(0,0,0,.3), 0 0 0 1px rgba(255,255,255,.05);
+      --shadow-md: 0 4px 16px rgba(0,0,0,.4), 0 0 0 1px rgba(255,255,255,.05);
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body {
+      font-family:'Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+      background:var(--bg); color:var(--text-primary); line-height:1.6; font-size:15px;
+      transition:background var(--dur) var(--ease),color var(--dur) var(--ease);
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position:sticky; top:0; z-index:200;
+      background:rgba(250,249,248,.88);
+      backdrop-filter:blur(20px) saturate(180%);
+      -webkit-backdrop-filter:blur(20px) saturate(180%);
+      border-bottom:1px solid var(--border);
+      padding:0 32px; height:52px;
+      display:flex; align-items:center; justify-content:space-between;
+      transition:background var(--dur) var(--ease);
+    }
+    [data-theme="dark"] nav { background:rgba(28,26,25,.88); }
+    .nav-logo { display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px; color:var(--copilot-primary); }
+    .nav-links { display:flex; gap:2px; list-style:none; }
+    .nav-links a {
+      text-decoration:none; color:var(--text-secondary); font-size:13px; font-weight:500;
+      padding:6px 10px; border-radius:var(--radius-sm);
+      transition:color var(--dur),background var(--dur);
+    }
+    .nav-links a:hover, .nav-links a.active { color:var(--copilot-primary); background:var(--copilot-light); }
+    [data-theme="dark"] .nav-links a:hover, [data-theme="dark"] .nav-links a.active { background:rgba(0,120,212,.18); }
+    .theme-btn {
+      background:none; border:1px solid var(--border); border-radius:var(--radius-sm);
+      width:32px; height:32px; cursor:pointer; color:var(--text-secondary);
+      display:flex; align-items:center; justify-content:center; font-size:16px;
+      transition:all var(--dur);
+    }
+    .theme-btn:hover { background:var(--bg-subtle); border-color:var(--border-strong); }
+
+    /* ===== HERO ===== */
+    .hero {
+      position:relative; min-height:88vh;
+      display:flex; align-items:center; justify-content:center; overflow:hidden;
+      background:linear-gradient(160deg,#050d1a 0%,#0c1e3a 50%,#1a0a2e 100%);
+    }
+    #particles { position:absolute; inset:0; overflow:hidden; }
+    .pt {
+      position:absolute; border-radius:50%;
+      background:rgba(255,255,255,.7);
+      animation:ptfloat var(--d,6s) linear infinite;
+      animation-delay:var(--dl,0s);
+    }
+    @keyframes ptfloat {
+      0%   { transform:translateY(105vh) scale(0); opacity:0; }
+      8%   { opacity:1; }
+      92%  { opacity:.8; }
+      100% { transform:translateY(-60px) scale(1.4); opacity:0; }
+    }
+    .hero-inner { position:relative; z-index:1; text-align:center; padding:48px 24px; max-width:940px; }
+    .hero-badge {
+      display:inline-flex; align-items:center; gap:7px;
+      background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.18);
+      border-radius:var(--radius-full); padding:6px 16px;
+      font-size:12px; color:rgba(255,255,255,.75); margin-bottom:28px;
+      backdrop-filter:blur(10px); letter-spacing:.5px;
+    }
+    .hero-title {
+      font-size:clamp(38px,7.5vw,76px); font-weight:800; line-height:1.08;
+      color:#fff; margin-bottom:20px; letter-spacing:-1.5px;
+    }
+    .gc { background:linear-gradient(90deg,#50E6FF,#0078D4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .vc { color:rgba(255,255,255,.3); font-size:.62em; letter-spacing:4px; font-weight:400; }
+    .cc { background:linear-gradient(90deg,#E8956A,#F5C99A); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .hero-sub { font-size:18px; color:rgba(255,255,255,.6); max-width:580px; margin:0 auto 44px; }
+    .hero-stats { display:flex; justify-content:center; gap:56px; flex-wrap:wrap; }
+    .hs-num { font-size:40px; font-weight:800; color:#fff; }
+    .hs-num.cn-c { background:linear-gradient(90deg,#50E6FF,#0078D4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .hs-num.cn-cl { background:linear-gradient(90deg,#E8956A,#F5C99A); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .hs-lbl { font-size:12px; color:rgba(255,255,255,.45); margin-top:4px; }
+    .scroll-hint {
+      position:absolute; bottom:28px; left:50%; transform:translateX(-50%);
+      display:flex; flex-direction:column; align-items:center; gap:8px;
+      color:rgba(255,255,255,.35); font-size:12px; letter-spacing:.5px;
+    }
+    .bounce { width:6px; height:6px; background:rgba(255,255,255,.35); border-radius:50%; animation:bce 1.6s ease-in-out infinite; }
+    @keyframes bce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(7px)} }
+
+    /* ===== LAYOUT ===== */
+    section { padding:80px 0; }
+    .container { max-width:1100px; margin:0 auto; padding:0 32px; }
+    .sec-hdr { text-align:center; margin-bottom:52px; }
+    .sec-label {
+      display:inline-flex; align-items:center; gap:6px;
+      font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:2px;
+      color:var(--copilot-primary); margin-bottom:12px;
+    }
+    .sec-title { font-size:clamp(26px,4vw,40px); font-weight:800; line-height:1.2; letter-spacing:-.5px; margin-bottom:14px; }
+    .sec-sub { font-size:17px; color:var(--text-secondary); max-width:600px; margin:0 auto; }
+
+    /* ===== CARD ===== */
+    .card {
+      background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-sm); transition:box-shadow var(--dur) var(--ease), transform var(--dur) var(--ease);
+    }
+    .card:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .card-body { padding:24px; }
+
+    /* ===== VS SECTION ===== */
+    #vs { background:var(--bg-subtle); }
+    .vs-grid { display:grid; grid-template-columns:1fr 52px 1fr; gap:20px; align-items:start; }
+    .vs-card { border-radius:var(--radius-xl); overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow-sm); }
+    .vs-card-hd { padding:26px 26px 18px; display:flex; align-items:center; gap:14px; }
+    .vs-card-hd.cop { background:var(--copilot-gradient); }
+    .vs-card-hd.claud { background:var(--claude-gradient); }
+    .vs-ico { width:48px; height:48px; border-radius:12px; background:rgba(255,255,255,.2); display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; }
+    .vs-name { font-size:21px; font-weight:800; color:#fff; }
+    .vs-tag { font-size:13px; color:rgba(255,255,255,.72); }
+    .vs-score-badge { margin-left:auto; }
+    .score-pill { display:inline-flex; align-items:center; gap:4px; padding:5px 11px; border-radius:var(--radius-full); font-size:13px; font-weight:800; }
+    .score-pill.cop { background:rgba(255,255,255,.22); color:#fff; }
+    .score-pill.claud { background:rgba(255,255,255,.22); color:#fff; }
+    .vs-card-bd { padding:20px 24px; background:var(--bg-card); }
+    .vs-row { display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--border); font-size:14px; }
+    .vs-row:last-child { border-bottom:none; }
+    .vs-row-lbl { color:var(--text-secondary); }
+    .vs-row-val { font-weight:700; text-align:right; }
+    .badge { display:inline-flex; align-items:center; gap:3px; padding:3px 9px; border-radius:var(--radius-full); font-size:12px; font-weight:600; }
+    .b-blue { background:var(--copilot-light); color:var(--copilot-dark); }
+    .b-orange { background:#fef0e6; color:var(--claude-dark); }
+    .b-green { background:var(--green-light); color:var(--green); }
+    .b-purple { background:#ede8fa; color:var(--copilot-purple); }
+    .vs-mid { display:flex; align-items:flex-start; justify-content:center; padding-top:88px; }
+    .vs-circle { width:52px; height:52px; border-radius:50%; background:var(--bg-card); border:3px solid var(--border); display:flex; align-items:center; justify-content:center; font-weight:900; font-size:13px; color:var(--text-secondary); box-shadow:var(--shadow-md); }
+
+    /* MINDSHARE */
+    .ms-wrap { margin-top:40px; }
+    .ms-row { margin-bottom:18px; }
+    .ms-top { display:flex; justify-content:space-between; margin-bottom:7px; font-size:14px; }
+    .ms-cop-lbl { font-weight:700; color:var(--copilot-primary); }
+    .ms-cl-lbl { font-weight:700; color:var(--claude-primary); }
+    .ms-bg { height:10px; background:var(--bg-strong); border-radius:var(--radius-full); overflow:hidden; }
+    .ms-fill { height:100%; border-radius:var(--radius-full); width:0; transition:width 1.3s cubic-bezier(.4,0,.2,1); }
+    .ms-fill.cop { background:var(--copilot-gradient); }
+    .ms-fill.cl { background:var(--claude-gradient); }
+    .ms-note { font-size:12px; color:var(--text-tertiary); margin-top:14px; }
+
+    /* HIGHLIGHT BOX */
+    .hbox {
+      background:linear-gradient(135deg,rgba(0,120,212,.07),rgba(98,100,167,.07));
+      border:1px solid rgba(0,120,212,.18); border-radius:var(--radius-lg); padding:20px 24px;
+    }
+    [data-theme="dark"] .hbox { background:linear-gradient(135deg,rgba(0,120,212,.14),rgba(98,100,167,.14)); border-color:rgba(0,120,212,.28); }
+
+    /* ===== COMPETE ===== */
+    #compete { background:var(--bg); }
+    .battle-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:18px; }
+    .bc { border-radius:var(--radius-lg); overflow:hidden; border:1px solid var(--border); box-shadow:var(--shadow-sm); transition:box-shadow var(--dur),transform var(--dur); background:var(--bg-card); }
+    .bc:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .bc-hd { padding:15px 20px; display:flex; align-items:center; gap:10px; background:var(--copilot-gradient); }
+    .bc-hd.green { background:linear-gradient(135deg,#107C10,#50E6FF); }
+    .bc-ico { font-size:22px; }
+    .bc-ttl { font-size:15px; font-weight:700; color:#fff; }
+    .bc-bd { padding:18px 20px; }
+    .bc-pt { display:flex; gap:10px; padding:9px 0; border-bottom:1px solid var(--border); font-size:14px; }
+    .bc-pt:last-child { border-bottom:none; }
+    .bc-pt-ico { flex-shrink:0; font-size:16px; }
+    .bc-pt-txt { color:var(--text-secondary); }
+    .bc-pt-txt strong { color:var(--text-primary); }
+
+    /* ===== BETTER TOGETHER ===== */
+    #together { background:var(--bg-subtle); }
+    .tg-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:18px; }
+    .tc { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; box-shadow:var(--shadow-sm); transition:box-shadow var(--dur),transform var(--dur); }
+    .tc:hover { box-shadow:var(--shadow-md); transform:translateY(-3px); }
+    .tc-top { padding:22px 22px 14px; display:flex; align-items:flex-start; gap:12px; }
+    .tc-ico { width:46px; height:46px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:21px; flex-shrink:0; }
+    .tc-ico.foundry  { background:linear-gradient(135deg,#0078D4,#50E6FF); }
+    .tc-ico.cowork   { background:linear-gradient(135deg,#6264A7,#C96442); }
+    .tc-ico.research { background:linear-gradient(135deg,#107C10,#50E6FF); }
+    .tc-ico.studio   { background:linear-gradient(135deg,#CA5010,#FFC83D); }
+    .tc-ico.github   { background:linear-gradient(135deg,#24292E,#586069); }
+    .tc-ico.safety   { background:linear-gradient(135deg,#6264A7,#50E6FF); }
+    .tc-name { font-size:16px; font-weight:700; color:var(--text-primary); margin-bottom:3px; }
+    .tc-ctx { font-size:11px; color:var(--copilot-primary); font-weight:700; text-transform:uppercase; letter-spacing:.6px; }
+    .tc-bd { padding:0 22px 22px; font-size:14px; color:var(--text-secondary); }
+
+    /* ===== COWORK SECTION ===== */
+    #cowork { background:var(--bg); }
+    .cw-hero { display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center; margin-bottom:52px; }
+    .cw-intro h3 { font-size:24px; font-weight:800; margin-bottom:12px; }
+    .cw-intro p { color:var(--text-secondary); margin-bottom:14px; }
+    .cw-tags { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+    .chat-mock { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-xl); overflow:hidden; box-shadow:var(--shadow-lg); }
+    .chat-hd { padding:14px 18px; background:linear-gradient(135deg,#6264A7,#C96442); display:flex; align-items:center; gap:10px; }
+    .chat-hd-ava { width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,.22); display:flex; align-items:center; justify-content:center; font-size:15px; }
+    .chat-hd-txt { font-weight:700; font-size:14px; color:#fff; }
+    .chat-hd-sub { font-size:12px; color:rgba(255,255,255,.65); }
+    .chat-msgs { padding:16px; display:flex; flex-direction:column; gap:11px; }
+    .cm { display:flex; gap:8px; align-items:flex-start; }
+    .cm.user { flex-direction:row-reverse; }
+    .cb { max-width:82%; padding:9px 13px; border-radius:12px; font-size:13px; line-height:1.55; }
+    .cm.user .cb { background:var(--copilot-gradient); color:#fff; border-bottom-right-radius:3px; }
+    .cm.assist .cb { background:var(--bg-subtle); color:var(--text-primary); border:1px solid var(--border); border-bottom-left-radius:3px; }
+    .cm-ava { width:27px; height:27px; border-radius:50%; font-size:13px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .cm.user .cm-ava { background:var(--copilot-gradient); }
+    .cm.assist .cm-ava { background:linear-gradient(135deg,#6264A7,#C96442); }
+    .cw-steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; }
+    .cw-step { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); padding:20px; transition:box-shadow var(--dur),transform var(--dur); }
+    .cw-step:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .cw-num { width:32px; height:32px; border-radius:50%; background:var(--copilot-gradient); color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; margin-bottom:12px; }
+    .cw-step h4 { font-size:15px; font-weight:700; margin-bottom:7px; }
+    .cw-step p { font-size:13px; color:var(--text-secondary); }
+
+    /* ===== PROMPTS ===== */
+    #prompts { background:var(--bg-subtle); }
+    .tabs { display:flex; gap:6px; background:var(--bg-strong); padding:4px; border-radius:var(--radius-lg); width:fit-content; margin:0 auto 28px; }
+    .tab-btn {
+      padding:9px 22px; border-radius:var(--radius-md); border:none; cursor:pointer;
+      font-size:14px; font-weight:600; color:var(--text-secondary); background:transparent;
+      transition:all var(--dur); font-family:inherit;
+    }
+    .tab-btn.active { background:var(--bg-card); color:var(--copilot-primary); box-shadow:var(--shadow-sm); }
+    .tab-panel { display:none; }
+    .tab-panel.active { display:grid; grid-template-columns:repeat(auto-fit,minmax(310px,1fr)); gap:16px; }
+    .pc { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius-lg); overflow:hidden; transition:box-shadow var(--dur),transform var(--dur); }
+    .pc:hover { box-shadow:var(--shadow-md); transform:translateY(-2px); }
+    .pc-hd { padding:11px 16px; background:var(--bg-subtle); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+    .pc-cat { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; color:var(--copilot-primary); }
+    .copy-btn {
+      background:none; border:1px solid var(--border); border-radius:var(--radius-sm);
+      padding:4px 10px; font-size:12px; cursor:pointer; color:var(--text-secondary);
+      display:flex; align-items:center; gap:4px; font-family:inherit; transition:all var(--dur);
+    }
+    .copy-btn:hover { background:var(--copilot-light); border-color:var(--copilot-primary); color:var(--copilot-primary); }
+    .copy-btn.copied { background:var(--green-light); border-color:var(--green); color:var(--green); }
+    .pc-txt { padding:16px; font-size:14px; color:var(--text-primary); line-height:1.65; }
+    .pc-txt em { color:var(--copilot-primary); font-style:normal; font-weight:600; background:var(--copilot-light); padding:1px 5px; border-radius:3px; }
+
+    /* ===== CLOSING ===== */
+    #closing { background:linear-gradient(160deg,#050d1a 0%,#0c1e3a 60%,#1a0a2e 100%); color:#fff; text-align:center; padding:96px 0; }
+    .closing-inner { max-width:740px; margin:0 auto; padding:0 24px; }
+    .closing-icon { font-size:52px; margin-bottom:22px; }
+    .closing-title { font-size:clamp(28px,5vw,46px); font-weight:800; line-height:1.15; margin-bottom:18px; letter-spacing:-.5px; }
+    .closing-title em { font-style:normal; background:linear-gradient(90deg,#50E6FF,#0078D4); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .closing-body { font-size:17px; color:rgba(255,255,255,.65); max-width:560px; margin:0 auto 28px; }
+    .closing-pills { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:36px; }
+    .cp { background:rgba(255,255,255,.09); border:1px solid rgba(255,255,255,.18); border-radius:var(--radius-full); padding:7px 17px; font-size:14px; color:rgba(255,255,255,.88); backdrop-filter:blur(8px); }
+    .pitch-box { background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.14); border-radius:var(--radius-lg); padding:24px 28px; text-align:left; max-width:600px; margin:0 auto; }
+    .pitch-lbl { font-size:11px; color:rgba(255,255,255,.5); font-weight:700; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:8px; }
+    .pitch-txt { font-size:15px; color:rgba(255,255,255,.88); line-height:1.75; }
+
+    /* ===== FOOTER ===== */
+    footer { background:var(--bg); border-top:1px solid var(--border); padding:20px 32px; display:flex; align-items:center; justify-content:space-between; font-size:13px; color:var(--text-tertiary); }
+
+    /* ===== ANIMATIONS ===== */
+    .reveal { opacity:0; transform:translateY(22px); transition:opacity .6s var(--ease), transform .6s var(--ease); }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .rd1 { transition-delay:.08s; }
+    .rd2 { transition-delay:.18s; }
+    .rd3 { transition-delay:.28s; }
+    .rd4 { transition-delay:.38s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:768px) {
+      nav { padding:0 16px; }
+      .nav-links { display:none; }
+      .container { padding:0 16px; }
+      section { padding:56px 0; }
+      .vs-grid { grid-template-columns:1fr; }
+      .vs-mid { display:none; }
+      .cw-hero { grid-template-columns:1fr; }
+      footer { flex-direction:column; gap:6px; text-align:center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav>
+  <div class="nav-logo">⚡ AI Showdown 2026</div>
+  <ul class="nav-links">
+    <li><a href="#vs">Copilot vs Claude</a></li>
+    <li><a href="#compete">Compete</a></li>
+    <li><a href="#together">Better Together</a></li>
+    <li><a href="#cowork">Cowork 101</a></li>
+    <li><a href="#prompts">Prompts</a></li>
+    <li><a href="#closing">Closing</a></li>
+  </ul>
+  <button class="theme-btn" id="themeBtn" title="Toggle dark mode">🌙</button>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div id="particles"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">⚡ &nbsp;March 2026 · Enterprise AI Landscape</div>
+    <h1 class="hero-title">
+      <span class="gc">Microsoft 365 Copilot</span><br>
+      <span class="vc">VS</span><br>
+      <span class="cc">Claude</span>
+    </h1>
+    <p class="hero-sub">Who has the enterprise mindshare? Where does each win? And how do you play the two together? Let's settle this — professionally.</p>
+    <div class="hero-stats">
+      <div>
+        <div class="hs-num cn-c" data-count="300" data-sfx="M+">0M+</div>
+        <div class="hs-lbl">M365 commercial seats</div>
+      </div>
+      <div>
+        <div class="hs-num" style="color:rgba(255,255,255,.25)">🆚</div>
+        <div class="hs-lbl">&nbsp;</div>
+      </div>
+      <div>
+        <div class="hs-num cn-cl" data-count="60" data-sfx="%">0%</div>
+        <div class="hs-lbl">Fortune 500 using Claude</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL TO EXPLORE <div class="bounce"></div></div>
+</header>
+
+<!-- ===== SECTION 1: COPILOT VS CLAUDE ===== -->
+<section id="vs">
+  <div class="container">
+    <div class="sec-hdr reveal">
+      <div class="sec-label">🥊 The Big Question</div>
+      <h2 class="sec-title">Copilot vs Claude — Who's Cooler?</h2>
+      <p class="sec-sub">A (mostly) objective look at how both AIs resonate in the market as of March 2026 — and what that means for your conversations.</p>
+    </div>
+
+    <div class="vs-grid reveal">
+      <!-- COPILOT -->
+      <div class="vs-card">
+        <div class="vs-card-hd cop">
+          <div class="vs-ico">🪁</div>
+          <div>
+            <div class="vs-name">M365 Copilot</div>
+            <div class="vs-tag">The Enterprise Powerhouse</div>
+          </div>
+          <div class="vs-score-badge"><span class="score-pill cop">⭐ 8.8 / 10</span></div>
+        </div>
+        <div class="vs-card-bd">
+          <div class="vs-row"><span class="vs-row-lbl">Primary audience</span><span class="vs-row-val"><span class="badge b-blue">Enterprise</span></span></div>
+          <div class="vs-row"><span class="vs-row-lbl">App integration</span><span class="vs-row-val">🔥 Deep M365 native</span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Your data access</span><span class="vs-row-val">✅ Microsoft Graph</span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Security &amp; compliance</span><span class="vs-row-val">✅ Purview built-in</span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Can take actions</span><span class="vs-row-val">✅ Sends, books, creates</span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Coding (GitHub Copilot)</span><span class="vs-row-val">⚡ Very strong</span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Enterprise mindshare</span><span class="vs-row-val">🏆 Dominant</span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Market perception</span><span class="vs-row-val"><span class="badge b-blue">The workhorse of AI</span></span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Cool factor</span><span class="vs-row-val">🪄 "It's IN everything"</span></div>
+        </div>
+      </div>
+
+      <!-- VS -->
+      <div class="vs-mid"><div class="vs-circle">VS</div></div>
+
+      <!-- CLAUDE -->
+      <div class="vs-card">
+        <div class="vs-card-hd claud">
+          <div class="vs-ico">🧠</div>
+          <div>
+            <div class="vs-name">Claude</div>
+            <div class="vs-tag">The Developer Darling</div>
+          </div>
+          <div class="vs-score-badge"><span class="score-pill claud">⭐ 8.6 / 10</span></div>
+        </div>
+        <div class="vs-card-bd">
+          <div class="vs-row"><span class="vs-row-lbl">Primary audience</span><span class="vs-row-val"><span class="badge b-orange">Developers &amp; tech</span></span></div>
+          <div class="vs-row"><span class="vs-row-lbl">App integration</span><span class="vs-row-val">📡 API / Bedrock / Vertex</span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Your data access</span><span class="vs-row-val">⚠️ User-provided only</span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Security &amp; compliance</span><span class="vs-row-val">⚠️ Org-level controls</span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Can take actions</span><span class="vs-row-val">⚠️ With custom build</span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Coding (Claude Code)</span><span class="vs-row-val">🔥 Exceptional</span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Developer mindshare</span><span class="vs-row-val">🏆 Leading</span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Market perception</span><span class="vs-row-val"><span class="badge b-orange">The thoughtful AI</span></span></div>
+          <div class="vs-row"><span class="vs-row-lbl">Cool factor</span><span class="vs-row-val">🎩 "Smarter conversations"</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MINDSHARE BARS -->
+    <div class="card reveal" style="margin-top:36px;">
+      <div class="card-body">
+        <h3 style="font-size:18px;font-weight:700;margin-bottom:22px;">📊 Market Mindshare — March 2026</h3>
+        <div class="ms-wrap">
+          <div class="ms-row">
+            <div class="ms-top"><span style="font-size:14px;font-weight:600;">Enterprise Productivity Workflows</span><span class="ms-cop-lbl">Copilot 82%</span></div>
+            <div class="ms-bg"><div class="ms-fill cop" data-w="82"></div></div>
+          </div>
+          <div class="ms-row">
+            <div class="ms-top"><span style="font-size:14px;font-weight:600;">Developer / Coding Assistance</span><span class="ms-cl-lbl">Claude Code 48% · GitHub Copilot 52%</span></div>
+            <div class="ms-bg"><div class="ms-fill cl" data-w="48"></div></div>
+          </div>
+          <div class="ms-row">
+            <div class="ms-top"><span style="font-size:14px;font-weight:600;">Enterprise AI Brand Awareness</span><span class="ms-cop-lbl">Copilot 87%</span></div>
+            <div class="ms-bg"><div class="ms-fill cop" data-w="87"></div></div>
+          </div>
+          <div class="ms-row">
+            <div class="ms-top"><span style="font-size:14px;font-weight:600;">"Safest AI for enterprise" perception</span><span class="ms-cop-lbl">Copilot 74%</span></div>
+            <div class="ms-bg"><div class="ms-fill cop" data-w="74"></div></div>
+          </div>
+          <div class="ms-row">
+            <div class="ms-top"><span style="font-size:14px;font-weight:600;">"Best reasoning quality" (tech teams)</span><span class="ms-cl-lbl">Claude 56%</span></div>
+            <div class="ms-bg"><div class="ms-fill cl" data-w="56"></div></div>
+          </div>
+        </div>
+        <p class="ms-note">* Illustrative based on analyst trends, industry surveys, and competitive intelligence as of Q1 2026.</p>
+      </div>
+    </div>
+
+    <div class="hbox reveal" style="margin-top:28px;">
+      <h3 style="font-size:16px;font-weight:700;margin-bottom:10px;">🎯 The Honest Verdict</h3>
+      <p style="font-size:14px;color:var(--text-secondary);line-height:1.75;"><strong>Copilot wins on enterprise deployment, data integration, and productivity breadth.</strong> With M365 embedded across the Fortune 500, Copilot has home-field advantage — your users are already in Teams, Outlook, and Word. Claude wins on <strong>raw reasoning depth, coding excellence, and developer brand loyalty</strong>, especially in technical teams running API evaluations. The good news? <strong>You don't have to pick one.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 2: COMPETE ===== -->
+<section id="compete">
+  <div class="container">
+    <div class="sec-hdr reveal">
+      <div class="sec-label">⚔️ Compete</div>
+      <h2 class="sec-title">Competing With Claude</h2>
+      <p class="sec-sub">How to position M365 Copilot when Claude comes up in customer conversations — honestly, confidently, and with conviction.</p>
+    </div>
+
+    <div class="battle-grid">
+      <div class="bc reveal rd1">
+        <div class="bc-hd"><span class="bc-ico">🔗</span><span class="bc-ttl">Integration is the game-changer</span></div>
+        <div class="bc-bd">
+          <div class="bc-pt"><span class="bc-pt-ico">💡</span><span class="bc-pt-txt"><strong>Claude is brilliant in a vacuum.</strong> It has no idea who your CEO is, what's in your pipeline, or what was decided in last Thursday's Teams call.</span></div>
+          <div class="bc-pt"><span class="bc-pt-ico">✅</span><span class="bc-pt-txt"><strong>Copilot knows your org.</strong> Microsoft Graph connects Copilot to emails, meetings, Teams chats, SharePoint, and the org chart — giving answers grounded in YOUR reality, not generic world knowledge.</span></div>
+          <div class="bc-pt"><span class="bc-pt-ico">🎯</span><span class="bc-pt-txt"><strong>Ask the customer:</strong> "Can Claude tell you what your top customer raised as a concern in Tuesday's call?" Copilot can.</span></div>
+        </div>
+      </div>
+
+      <div class="bc reveal rd2">
+        <div class="bc-hd"><span class="bc-ico">🔒</span><span class="bc-ttl">Enterprise-grade trust &amp; compliance</span></div>
+        <div class="bc-bd">
+          <div class="bc-pt"><span class="bc-pt-ico">⚠️</span><span class="bc-pt-txt"><strong>Direct Claude API usage</strong> triggers procurement, InfoSec review, and data residency questions — "where does our data actually go?"</span></div>
+          <div class="bc-pt"><span class="bc-pt-ico">✅</span><span class="bc-pt-txt"><strong>Copilot inherits Microsoft's compliance posture:</strong> Purview, data residency, eDiscovery, DLP, sensitivity labels — all managed in the admin centre your IT team already controls.</span></div>
+          <div class="bc-pt"><span class="bc-pt-ico">🎯</span><span class="bc-pt-txt"><strong>The security team already trusts Microsoft.</strong> They need a separate review cycle for Anthropic. That's months of delay and risk.</span></div>
+        </div>
+      </div>
+
+      <div class="bc reveal rd3">
+        <div class="bc-hd"><span class="bc-ico">⚡</span><span class="bc-ttl">Actions, not just advice</span></div>
+        <div class="bc-bd">
+          <div class="bc-pt"><span class="bc-pt-ico">📝</span><span class="bc-pt-txt"><strong>Claude tells you what to write.</strong> Copilot writes it, formats it, sends it, and tracks it — all within the apps your people live in every day.</span></div>
+          <div class="bc-pt"><span class="bc-pt-ico">✅</span><span class="bc-pt-txt"><strong>Copilot takes action:</strong> books meetings, summarises long threads, generates Excel models, creates polished decks, drafts and sends emails — with one click.</span></div>
+          <div class="bc-pt"><span class="bc-pt-ico">🎯</span><span class="bc-pt-txt"><strong>ROI is concrete and measurable:</strong> time saved per user per week, easily quantified and included in value realisations.</span></div>
+        </div>
+      </div>
+
+      <div class="bc reveal rd4">
+        <div class="bc-hd"><span class="bc-ico">🏗️</span><span class="bc-ttl">Platform + ecosystem advantage</span></div>
+        <div class="bc-bd">
+          <div class="bc-pt"><span class="bc-pt-ico">🔧</span><span class="bc-pt-txt"><strong>Copilot Studio</strong> lets customers build custom agents grounded in their own business data — SAP, Salesforce, ServiceNow, and hundreds of connectors — no custom dev required.</span></div>
+          <div class="bc-pt"><span class="bc-pt-ico">✅</span><span class="bc-pt-txt"><strong>Azure AI Foundry</strong> gives enterprise MLOps, model governance, and the ability to bring any model — including Claude — under one enterprise roof.</span></div>
+          <div class="bc-pt"><span class="bc-pt-ico">🎯</span><span class="bc-pt-txt"><strong>The position:</strong> "You don't just get an AI. You get the best AI platform for enterprise — and it can incorporate Claude too."</span></div>
+        </div>
+      </div>
+
+      <div class="bc reveal rd1">
+        <div class="bc-hd"><span class="bc-ico">💰</span><span class="bc-ttl">Total cost of ownership</span></div>
+        <div class="bc-bd">
+          <div class="bc-pt"><span class="bc-pt-ico">📊</span><span class="bc-pt-txt"><strong>Claude API costs scale fast</strong> — token-based pricing means enterprise-wide usage adds up quickly, and requires dev investment to integrate with existing systems.</span></div>
+          <div class="bc-pt"><span class="bc-pt-ico">✅</span><span class="bc-pt-txt"><strong>Copilot is predictable per-user-per-month</strong> on top of existing M365 licences. No infrastructure overhead, no shadow IT, no surprise bills.</span></div>
+          <div class="bc-pt"><span class="bc-pt-ico">🎯</span><span class="bc-pt-txt"><strong>Run the maths:</strong> enabling 10,000 users on Claude API vs Copilot — total cost including integration, security review, and ongoing support is usually a compelling story.</span></div>
+        </div>
+      </div>
+
+      <div class="bc reveal rd2">
+        <div class="bc-hd green"><span class="bc-ico">🤝</span><span class="bc-ttl">When to acknowledge Claude's strengths</span></div>
+        <div class="bc-bd">
+          <div class="bc-pt"><span class="bc-pt-ico">✅</span><span class="bc-pt-txt"><strong>Be honest:</strong> Claude's reasoning depth and coding ability are genuinely impressive. Technical buyers will know — don't dismiss it or you'll lose credibility instantly.</span></div>
+          <div class="bc-pt"><span class="bc-pt-ico">🔄</span><span class="bc-pt-txt"><strong>Reframe:</strong> "The good news is Microsoft and Anthropic are partners. Azure AI Foundry gives you Claude with Microsoft's enterprise compliance. You don't have to choose."</span></div>
+          <div class="bc-pt"><span class="bc-pt-ico">🎯</span><span class="bc-pt-txt"><strong>The winning play:</strong> Don't lose the platform conversation by over-defending the model. You're selling a productivity ecosystem — and you win that game easily.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 3: BETTER TOGETHER ===== -->
+<section id="together">
+  <div class="container">
+    <div class="sec-hdr reveal">
+      <div class="sec-label" style="color:#107C10;">🤝 Partnership</div>
+      <h2 class="sec-title">Copilot + Claude: Better Together</h2>
+      <p class="sec-sub">Microsoft invested ~$4B in Anthropic through Azure. Here's where that partnership shows up in products your customers can use today.</p>
+    </div>
+
+    <div class="tg-grid">
+      <div class="tc reveal rd1">
+        <div class="tc-top">
+          <div class="tc-ico cowork">🤖</div>
+          <div><div class="tc-name">Copilot Cowork</div><div class="tc-ctx">Copilot × Claude</div></div>
+        </div>
+        <div class="tc-bd">Claude's advanced reasoning embedded directly into a Microsoft 365-connected agent. Cowork can read your email, calendar, Teams chats, and files — then apply Claude-level intelligence to your real work context. Think of it as Claude with M365 superpowers.</div>
+      </div>
+
+      <div class="tc reveal rd2">
+        <div class="tc-top">
+          <div class="tc-ico foundry">🏭</div>
+          <div><div class="tc-name">Azure AI Foundry</div><div class="tc-ctx">Claude on Azure</div></div>
+        </div>
+        <div class="tc-bd">Claude models (Haiku, Sonnet, Opus) available natively in Azure AI Foundry. Customers get Anthropic's world-class models with Microsoft's enterprise compliance posture, data residency guarantees, Azure billing, and one contract — no separate Anthropic procurement.</div>
+      </div>
+
+      <div class="tc reveal rd3">
+        <div class="tc-top">
+          <div class="tc-ico research">🔍</div>
+          <div><div class="tc-name">Copilot Researcher</div><div class="tc-ctx">Deep Research in M365</div></div>
+        </div>
+        <div class="tc-bd">Copilot's deep research agent synthesises internal M365 data with external web sources. Powered by Claude's long-context reasoning, it surfaces connections across hundreds of documents, email threads, and meetings that no human could manually find.</div>
+      </div>
+
+      <div class="tc reveal rd4">
+        <div class="tc-top">
+          <div class="tc-ico studio">🛠️</div>
+          <div><div class="tc-name">Copilot Studio</div><div class="tc-ctx">Claude-powered Agents</div></div>
+        </div>
+        <div class="tc-bd">Build custom agents in Copilot Studio that call Claude APIs via Azure AI Foundry connectors. Customers can choose the best model for each task — Copilot handles M365 orchestration and data grounding, Claude handles the heavy reasoning lift.</div>
+      </div>
+
+      <div class="tc reveal rd1">
+        <div class="tc-top">
+          <div class="tc-ico github">💻</div>
+          <div><div class="tc-name">GitHub Copilot + Claude</div><div class="tc-ctx">Dev Productivity</div></div>
+        </div>
+        <div class="tc-bd">Developers can select Claude as their underlying model inside GitHub Copilot Chat. Teams with strong Claude affinity keep their preferred model while staying inside the GitHub Copilot enterprise licensing umbrella — best of both worlds.</div>
+      </div>
+
+      <div class="tc reveal rd2">
+        <div class="tc-top">
+          <div class="tc-ico safety">🛡️</div>
+          <div><div class="tc-name">Azure AI Content Safety</div><div class="tc-ctx">Responsible AI Layer</div></div>
+        </div>
+        <div class="tc-bd">Whether your customer uses Copilot or Claude via Azure, Microsoft's content safety and responsible AI layer applies — giving CISO teams a consistent safety posture and audit trail across their entire AI estate, regardless of which model is running.</div>
+      </div>
+    </div>
+
+    <div class="hbox reveal" style="margin-top:36px;text-align:center;">
+      <p style="font-size:16px;font-weight:700;margin-bottom:8px;">🌟 The Strategic Frame</p>
+      <p style="font-size:14px;color:var(--text-secondary);">Microsoft wins the enterprise <strong>platform</strong>. Anthropic provides world-class <strong>model capability</strong>. Your message isn't "Copilot OR Claude" — it's <strong>"with Microsoft, you get both, better integrated, more securely, on one bill."</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 4: COWORK FOR DUMMIES ===== -->
+<section id="cowork">
+  <div class="container">
+    <div class="sec-hdr reveal">
+      <div class="sec-label" style="color:var(--copilot-purple);">🤖 Cowork 101</div>
+      <h2 class="sec-title">Cowork for Dummies</h2>
+      <p class="sec-sub">What is Copilot Cowork, how does it work, and why should every Microsoft Account Team be using it right now?</p>
+    </div>
+
+    <div class="cw-hero">
+      <div class="cw-intro reveal">
+        <h3>Your AI co-worker — Claude's brain, connected to M365</h3>
+        <p>Imagine Claude — brilliant, thoughtful, excellent at reasoning — but it also knows your emails, your calendar, your colleagues, your Teams conversations, and your SharePoint files. That's Cowork.</p>
+        <p>Cowork is a Claude-powered AI agent that lives inside the Microsoft 365 ecosystem. It can <strong>read your inbox, check your calendar, search your Teams chats, access your SharePoint files,</strong> and then use Claude's intelligence to help you act on all of it — sending emails, booking meetings, creating documents.</p>
+        <p>Think of it as a super-capable new colleague who never sleeps, never forgets a conversation, and has read every email you've ever sent.</p>
+        <div class="cw-tags">
+          <span class="badge b-purple">📧 Reads your email</span>
+          <span class="badge b-blue">📅 Knows your calendar</span>
+          <span class="badge b-green">💬 Scans Teams chats</span>
+          <span class="badge b-orange">📁 Accesses your files</span>
+        </div>
+      </div>
+
+      <div class="chat-mock reveal rd2">
+        <div class="chat-hd">
+          <div class="chat-hd-ava">🤖</div>
+          <div>
+            <div class="chat-hd-txt">Copilot Cowork</div>
+            <div class="chat-hd-sub">Powered by Claude · Connected to M365</div>
+          </div>
+        </div>
+        <div class="chat-msgs">
+          <div class="cm user">
+            <div class="cm-ava">👤</div>
+            <div class="cb">Prep me for my 2pm with Contoso today.</div>
+          </div>
+          <div class="cm assist">
+            <div class="cm-ava">🤖</div>
+            <div class="cb">
+              Checked your calendar, last 3 emails from Contoso, and your Teams chat with their team. Here's what matters:<br><br>
+              📌 <strong>Key concern:</strong> Sarah flagged EU data residency questions last week<br>
+              📊 <strong>Status:</strong> POC in progress — evaluating Copilot Studio vs build-your-own<br>
+              💡 <strong>Talking point:</strong> Bring up EU Data Boundary — addresses Sarah's concern directly
+            </div>
+          </div>
+          <div class="cm user">
+            <div class="cm-ava">👤</div>
+            <div class="cb">Draft a follow-up email after the meeting.</div>
+          </div>
+          <div class="cm assist">
+            <div class="cm-ava">🤖</div>
+            <div class="cb">Done ✅ — draft created in your Outlook. It references the data residency point, confirms next steps, and BCC's Fiona.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="reveal" style="font-size:20px;font-weight:700;margin-bottom:18px;text-align:center;">How Cowork Works — In 4 Steps</h3>
+    <div class="cw-steps">
+      <div class="cw-step reveal rd1">
+        <div class="cw-num">1</div>
+        <h4>You ask in plain English</h4>
+        <p>No prompt engineering needed. Just talk to it like a very capable colleague. "Prep me for this meeting" or "what did I miss this week?"</p>
+      </div>
+      <div class="cw-step reveal rd2">
+        <div class="cw-num">2</div>
+        <h4>Cowork searches your M365 data</h4>
+        <p>It pulls relevant emails, calendar events, Teams messages, and files — building the full context for your request using Microsoft Graph.</p>
+      </div>
+      <div class="cw-step reveal rd3">
+        <div class="cw-num">3</div>
+        <h4>Claude reasons over your context</h4>
+        <p>Claude's intelligence synthesises everything it found, applies multi-step reasoning, and generates a grounded, actionable response — not generic AI output.</p>
+      </div>
+      <div class="cw-step reveal rd4">
+        <div class="cw-num">4</div>
+        <h4>You approve &amp; it acts</h4>
+        <p>Cowork can send emails, book meetings, draft documents, or post Teams messages — you stay in control with a single approval click.</p>
+      </div>
+    </div>
+
+    <div class="hbox reveal" style="margin-top:36px;">
+      <p style="font-size:15px;font-weight:700;margin-bottom:8px;">🧠 One-liner you can use with any customer</p>
+      <p style="font-size:15px;color:var(--text-secondary);line-height:1.75;">"Cowork is like hiring a super-smart AI assistant who has read all your emails, knows your calendar, remembers every Teams conversation, and never needs a coffee break — powered by Claude's reasoning, connected to your M365 data."</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 5: PROMPTS ===== -->
+<section id="prompts">
+  <div class="container">
+    <div class="sec-hdr reveal">
+      <div class="sec-label">💬 Prompt Library</div>
+      <h2 class="sec-title">Example Prompts for the Account Team</h2>
+      <p class="sec-sub">Copy, paste, and adapt for Cowork. Swap the <em>highlighted bits</em> for your own customer, situation, and context.</p>
+    </div>
+
+    <div class="tabs reveal">
+      <button class="tab-btn active" data-tab="ae">👔 Account Executive</button>
+      <button class="tab-btn" data-tab="ats">⚙️ Account Technology Strategist</button>
+    </div>
+
+    <!-- AE PROMPTS -->
+    <div id="tab-ae" class="tab-panel active">
+      <div class="pc">
+        <div class="pc-hd"><span class="pc-cat">🔍 Pre-Meeting Prep</span>
+          <button class="copy-btn" data-text="Research [customer name] for me ahead of my meeting tomorrow. Pull their latest news, any mentions of AI or digital transformation in the press, and check my emails and Teams chats for recent context from their team. Summarise in 5 bullet points I can scan before the call.">📋 Copy</button></div>
+        <div class="pc-txt">Research <em>[customer name]</em> ahead of my meeting tomorrow. Pull their latest news, any mentions of AI or digital transformation in the press, and check my emails and Teams chats for recent context from their team. Summarise in 5 bullet points I can scan before the call.</div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-hd"><span class="pc-cat">📧 Post-Meeting Follow-Up</span>
+          <button class="copy-btn" data-text="I've just finished a meeting with [customer name]. Draft a follow-up email that: thanks them for their time, recaps the 3 key things we discussed, confirms the next steps we agreed, and includes a soft call-to-action to keep momentum. Keep it professional but warm — British English please.">📋 Copy</button></div>
+        <div class="pc-txt">I've just finished a meeting with <em>[customer name]</em>. Draft a follow-up email that: thanks them for their time, recaps the 3 key things we discussed, confirms the next steps we agreed, and includes a soft call-to-action to keep momentum. Keep it professional but warm — British English please.</div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-hd"><span class="pc-cat">📊 Relationship Health Check</span>
+          <button class="copy-btn" data-text="Go through all my emails and Teams messages from [customer name] in the last 30 days. Flag any risks, concerns, or blockers they've raised — and any signals suggesting they might be looking at a competitor. Give me a one-paragraph health summary of the relationship.">📋 Copy</button></div>
+        <div class="pc-txt">Go through all my emails and Teams messages from <em>[customer name]</em> in the last 30 days. Flag any risks, concerns, or blockers they've raised — and any signals suggesting they might be looking at a competitor. Give me a one-paragraph health summary of the relationship.</div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-hd"><span class="pc-cat">🏆 Executive Briefing</span>
+          <button class="copy-btn" data-text="My VP is joining my next call with [customer name]. Create a one-page brief they can read in 5 minutes: who the key stakeholders are, where we are in the sales cycle, what the customer cares about most, and what outcome we want from this meeting.">📋 Copy</button></div>
+        <div class="pc-txt">My VP is joining my next call with <em>[customer name]</em>. Create a one-page brief they can read in 5 minutes: who the key stakeholders are, where we are in the sales cycle, what the customer cares about most, and what outcome we want from this meeting.</div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-hd"><span class="pc-cat">📅 Monday Morning Triage</span>
+          <button class="copy-btn" data-text="It's Monday morning. Go through my unread emails from the last 3 days. Prioritise them for me: flag anything urgent that needs a reply today, highlight any customer escalations, and draft a quick acknowledgement for anything that just needs a holding response.">📋 Copy</button></div>
+        <div class="pc-txt">It's Monday morning. Go through my unread emails from the last 3 days. Prioritise them for me: flag anything urgent that needs a reply today, highlight any customer escalations, and draft a quick acknowledgement for anything that just needs a holding response.</div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-hd"><span class="pc-cat">💼 Business Case Builder</span>
+          <button class="copy-btn" data-text="Help me build a business case for M365 Copilot for [customer name]. They have [X] users, are in [industry], and have told me their top priorities are [saving time / reducing costs / improving compliance]. Give me 3 ROI scenarios I can present to their CFO.">📋 Copy</button></div>
+        <div class="pc-txt">Help me build a business case for M365 Copilot for <em>[customer name]</em>. They have <em>[X]</em> users, are in <em>[industry]</em>, and their top priorities are <em>[saving time / reducing costs / improving compliance]</em>. Give me 3 ROI scenarios I can present to their CFO.</div>
+      </div>
+    </div>
+
+    <!-- ATS PROMPTS -->
+    <div id="tab-ats" class="tab-panel">
+      <div class="pc">
+        <div class="pc-hd"><span class="pc-cat">⚔️ Technical Battle Card</span>
+          <button class="copy-btn" data-text="Create a technical comparison of Azure OpenAI Service vs [AWS Bedrock / Google Vertex AI / direct Anthropic API] for an enterprise customer evaluating AI platforms. Cover: model availability, data residency, compliance certifications, fine-tuning options, pricing model, and MLOps capabilities. Format as a side-by-side table.">📋 Copy</button></div>
+        <div class="pc-txt">Create a technical comparison of Azure OpenAI Service vs <em>[AWS Bedrock / Google Vertex AI / direct Anthropic API]</em> for an enterprise customer evaluating AI platforms. Cover: model availability, data residency, compliance certifications, fine-tuning options, pricing model, and MLOps capabilities. Format as a side-by-side table.</div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-hd"><span class="pc-cat">🔍 Technical Discovery Mining</span>
+          <button class="copy-btn" data-text="Search all my Teams chats and emails with [customer name]'s technical team over the last 60 days. Extract every technical requirement, concern, or objection they've raised about AI. Group them by theme (security, data, integration, cost) and suggest which Microsoft products or features address each one.">📋 Copy</button></div>
+        <div class="pc-txt">Search all my Teams chats and emails with <em>[customer name]</em>'s technical team over the last 60 days. Extract every technical requirement, concern, or objection they've raised about AI. Group them by theme (security, data, integration, cost) and suggest which Microsoft products or features address each one.</div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-hd"><span class="pc-cat">🏗️ Architecture Workshop Prep</span>
+          <button class="copy-btn" data-text="I'm running a half-day AI architecture workshop with [customer name]'s CTO and platform engineering team. They're evaluating whether to build their own LLM infrastructure or buy. Create a workshop agenda, 5 discovery questions I should ask, and a one-page Azure AI Foundry capability summary to leave behind.">📋 Copy</button></div>
+        <div class="pc-txt">I'm running a half-day AI architecture workshop with <em>[customer name]</em>'s CTO and platform engineering team. They're evaluating build vs buy for LLM infrastructure. Create a workshop agenda, 5 discovery questions I should ask, and a one-page Azure AI Foundry capability summary to leave behind.</div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-hd"><span class="pc-cat">📐 POC Design</span>
+          <button class="copy-btn" data-text="Help me design a 4-week Copilot Studio proof of concept for [customer name]. They want to build an internal knowledge assistant that connects to their HR SharePoint and IT ServiceNow instance. Define success criteria, architecture overview, week-by-week plan, and what Microsoft resources I should pull in.">📋 Copy</button></div>
+        <div class="pc-txt">Help me design a 4-week Copilot Studio proof of concept for <em>[customer name]</em>. They want an internal knowledge assistant connecting to their HR SharePoint and IT ServiceNow instance. Define success criteria, architecture overview, week-by-week plan, and what Microsoft resources I should engage.</div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-hd"><span class="pc-cat">🎓 Developer Enablement</span>
+          <button class="copy-btn" data-text="Design a half-day Azure AI Foundry hands-on lab for [customer name]'s developer team of ~20 people. They're experienced Python developers with REST API knowledge but no Azure AI background. Include learning objectives, 3 lab exercises, and key takeaways. Make it practical — they want to deploy something by end of day.">📋 Copy</button></div>
+        <div class="pc-txt">Design a half-day Azure AI Foundry hands-on lab for <em>[customer name]</em>'s developer team of ~20 people. They're experienced Python developers with REST API knowledge but no Azure AI background. Include learning objectives, 3 lab exercises, and key takeaways. Make it practical — they want to deploy something by end of day.</div>
+      </div>
+
+      <div class="pc">
+        <div class="pc-hd"><span class="pc-cat">🛡️ CISO Security Brief</span>
+          <button class="copy-btn" data-text="[Customer name]'s CISO has concerns about using AI on legal documents. Prepare a technical briefing covering: how M365 Copilot handles data at rest and in transit, what Purview controls apply to Copilot outputs, how to configure sensitivity labels to restrict Copilot access, and what audit logs are available for eDiscovery. Make it CISO-ready — no marketing fluff.">📋 Copy</button></div>
+        <div class="pc-txt"><em>[Customer name]</em>'s CISO has concerns about using AI on legal documents. Prepare a technical briefing covering: how M365 Copilot handles data at rest and in transit, what Purview controls apply to Copilot outputs, how to configure sensitivity labels, and what audit logs are available for eDiscovery. CISO-ready — no marketing fluff.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECTION 6: CLOSING ===== -->
+<section id="closing">
+  <div class="container">
+    <div class="closing-inner">
+      <div class="closing-icon">🚀</div>
+      <h2 class="closing-title">The future isn't Copilot <em>or</em> Claude.<br>It's Copilot <em>and</em> Claude.</h2>
+      <p class="closing-body">Microsoft's partnership with Anthropic means your customers don't have to choose between the best AI model and the best AI platform. They get both — deeply integrated, enterprise-ready, and on a single bill.</p>
+      <div class="closing-pills">
+        <span class="cp">🔗 Natively integrated into M365</span>
+        <span class="cp">🔒 Enterprise-grade, Purview-backed</span>
+        <span class="cp">⚡ Acts, not just advises</span>
+        <span class="cp">🧠 Claude-level reasoning</span>
+        <span class="cp">🏗️ Platform + Model together</span>
+        <span class="cp">💰 One contract, one bill</span>
+      </div>
+      <div class="pitch-box">
+        <div class="pitch-lbl">Your elevator pitch</div>
+        <div class="pitch-txt">"Microsoft 365 Copilot gives you the most deeply integrated AI in enterprise software — grounded in your data, built into the tools your people already use every day, and now enhanced with Claude's world-class reasoning through our Anthropic partnership. With Microsoft, you don't pick the best model OR the best platform. You get both."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>⚡ AI Showdown 2026 · Built for Microsoft UK Account Teams</span>
+  <span>Powered by Copilot Cowork</span>
+</footer>
+
+<script>
+  // ===== DARK MODE =====
+  const btn = document.getElementById('themeBtn');
+  const html = document.documentElement;
+  const saved = localStorage.getItem('ai-showdown-theme');
+  if (saved === 'dark') { html.setAttribute('data-theme','dark'); btn.textContent = '☀️'; }
+  btn.addEventListener('click', () => {
+    const dark = html.getAttribute('data-theme') !== 'dark';
+    html.setAttribute('data-theme', dark ? 'dark' : 'light');
+    btn.textContent = dark ? '☀️' : '🌙';
+    localStorage.setItem('ai-showdown-theme', dark ? 'dark' : 'light');
+  });
+
+  // ===== PARTICLES =====
+  const pc = document.getElementById('particles');
+  for (let i = 0; i < 55; i++) {
+    const p = document.createElement('div');
+    p.className = 'pt';
+    const sz = 1 + Math.random() * 2.5;
+    p.style.cssText = `left:${Math.random()*100}%;width:${sz}px;height:${sz}px;--d:${4+Math.random()*7}s;--dl:${-Math.random()*12}s;opacity:${.3+Math.random()*.7}`;
+    pc.appendChild(p);
+  }
+
+  // ===== COUNTER =====
+  function animateCount(el) {
+    const target = +el.getAttribute('data-count');
+    const sfx = el.getAttribute('data-sfx') || '+';
+    let n = 0; const inc = target / 55;
+    const t = setInterval(() => {
+      n = Math.min(n + inc, target);
+      el.textContent = Math.floor(n) + sfx;
+      if (n >= target) clearInterval(t);
+    }, 16);
+  }
+
+  // ===== MINDSHARE BARS =====
+  let barsAnimated = false;
+  function animateBars() {
+    if (barsAnimated) return; barsAnimated = true;
+    document.querySelectorAll('.ms-fill[data-w]').forEach(b => { b.style.width = b.getAttribute('data-w') + '%'; });
+  }
+
+  // ===== SCROLL REVEAL =====
+  const ro = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('visible');
+      if (e.target.closest('#vs')) { animateBars(); document.querySelectorAll('[data-count]').forEach(animateCount); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => ro.observe(el));
+
+  // Trigger bars when VS section first scrolls in
+  const vsObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { animateBars(); document.querySelectorAll('[data-count]').forEach(animateCount); vsObs.unobserve(e.target); }});
+  }, { threshold: 0.15 });
+  const vsEl = document.getElementById('vs');
+  if (vsEl) vsObs.observe(vsEl);
+
+  // ===== NAV ACTIVE STATE =====
+  const secs = document.querySelectorAll('section[id]');
+  const links = document.querySelectorAll('.nav-links a');
+  const navObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+    });
+  }, { threshold: 0.35 });
+  secs.forEach(s => navObs.observe(s));
+
+  // ===== TABS =====
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      const t = b.getAttribute('data-tab');
+      document.querySelectorAll('.tab-btn').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(x => x.classList.remove('active'));
+      b.classList.add('active');
+      document.getElementById('tab-' + t).classList.add('active');
+    });
+  });
+
+  // ===== COPY BUTTONS =====
+  document.querySelectorAll('.copy-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      const text = b.getAttribute('data-text');
+      const orig = b.innerHTML;
+      const success = () => { b.innerHTML = '✅ Copied!'; b.classList.add('copied'); setTimeout(() => { b.innerHTML = orig; b.classList.remove('copied'); }, 2000); };
+      if (navigator.clipboard) { navigator.clipboard.writeText(text).then(success).catch(() => {}); }
+      else { const ta = document.createElement('textarea'); ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); success(); }
+    });
+  });
+
+  // ===== SMOOTH SCROLL =====
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>
